@@ -17,7 +17,10 @@ int main (int argc, char **argv)
   assert (rc == 0);
 
   while (1) {
+    memset (BUFFER, '\0', 2048);
     gets (BUFFER);
+    if (0 == strlen (BUFFER))
+      break;
     s_send (pusher, BUFFER);
   }
 
