@@ -16,12 +16,13 @@ int main (int argc, char **argv)
   int rc = zmq_bind (pusher, argv [1]);
   assert (rc == 0);
 
+  int length;
   while (1) {
     memset (BUFFER, '\0', 2048);
     gets (BUFFER);
-    if (0 == strlen (BUFFER))
+    length = s_send (pusher, BUFFER);
+    if (0 == length)
       break;
-    s_send (pusher, BUFFER);
   }
 
   zmq_close (pusher);
