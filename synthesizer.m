@@ -2,6 +2,7 @@
 #import <AppKit/AppKit.h>
 
 #import <zmq.h>
+#import <time.h>
 #import <assert.h>
 #import "zstring.h"
 
@@ -25,6 +26,7 @@ int main (void)
 
   while (1) {
     char *string = s_recv (responder);
+    time_t start = time (NULL);
     printf ("synth: %s\n", string);
 
     NSString *wrapped = [NSString stringWithUTF8String:string];
@@ -39,12 +41,11 @@ int main (void)
     if (length == 0)
       break;
 
+    double elapsed = difftime (time (NULL), start);
     char *response = (char *) malloc (100 * sizeof(char));
     memset (response, '\0', 100);
-
-    snprintf (response, 100, "%u", (unsigned int) length);
+    snprintf (response, 100, "%d", (int) elapsed);
     s_send (responder, response);
-
     free (response);
   }
 

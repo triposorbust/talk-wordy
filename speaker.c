@@ -26,7 +26,7 @@ void loop (char *address)
       break;
 
     string = s_recv (requester);
-    printf ("spoke: %s\n", string);
+    printf ("speak: %ss\n", string);
     free (string);
   }
 
