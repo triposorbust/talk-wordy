@@ -27,7 +27,7 @@ void loop (char *address)
       break;
 
     string = s_recv (requester);
-    printf ("time: %s\n", string);
+    printf ("recv: %s\n", string);
     free (string);
 
     double elapsed = difftime (time (NULL), start);
