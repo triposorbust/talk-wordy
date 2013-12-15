@@ -1,6 +1,11 @@
 #ifndef __SPEAKER_H__
 #define __SPEAKER_H__
 
+#ifndef __SPEECHSYNTHESIS_H__
+#define __SPEECHSYNTHESIS_H__
+#include <SpeechSynthesis.h>
+#endif
+
 #ifndef __ZMQ_H__
 #define __ZMQ_H__
 #include <zmq.h>
