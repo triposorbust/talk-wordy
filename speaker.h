@@ -26,6 +26,11 @@
 #include <assert.h>
 #endif
 
+#ifndef __UNISTD_H__
+#define __UNISTD_H__
+#include <unistd.h>
+#endif
+
 #ifndef __ZSTRING_H__
 #include "zstring.h"
 #endif

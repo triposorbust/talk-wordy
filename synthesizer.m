@@ -5,7 +5,7 @@
 #import <assert.h>
 #import "zstring.h"
 
-int main (int argc, char **argv)
+int main (void)
 {
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
   NSSpeechSynthesizer *synth = [[NSSpeechSynthesizer alloc] initWithVoice:nil];
@@ -17,6 +17,7 @@ int main (int argc, char **argv)
 
   while (1) {
     char *string = s_recv (receiver);
+    printf ("synth: %s\n", string);
 
     NSString *wrapped = [NSString stringWithUTF8String:string];
     NSUInteger length = [wrapped length];
@@ -26,7 +27,7 @@ int main (int argc, char **argv)
       [NSThread sleepForTimeInterval:0.1];
     [wrapped autorelease];
 
-    free(string);
+    free (string);
     if (length == 0)
       break;
   }
