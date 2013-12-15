@@ -11,12 +11,14 @@ int main (void)
   NSSpeechSynthesizer *synth = [[NSSpeechSynthesizer alloc] initWithVoice:nil];
 
   void *context = zmq_ctx_new ();
-  void *receiver = zmq_socket (context, ZMQ_PAIR);
-  int rc = zmq_bind (receiver, "ipc://oasis.ipc");
+  void *subscriber = zmq_socket (context, ZMQ_SUB);
+  int rc = zmq_connect (subscriber, "ipc://oasis.ipc");
+  assert (rc == 0);
+  rc = zmq_setsockopt (subscriber, ZMQ_SUBSCRIBE, "", 0);
   assert (rc == 0);
 
   while (1) {
-    char *string = s_recv (receiver);
+    char *string = s_recv (subscriber);
     printf ("synth: %s\n", string);
 
     NSString *wrapped = [NSString stringWithUTF8String:string];
@@ -32,7 +34,7 @@ int main (void)
       break;
   }
 
-  zmq_close (receiver);
+  zmq_close (subscriber);
   zmq_ctx_destroy (context);
 
   [synth autorelease];
