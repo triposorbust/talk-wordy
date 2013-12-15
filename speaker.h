@@ -31,6 +31,11 @@
 #include <unistd.h>
 #endif
 
+#ifndef __TIME_H__
+#define __TIME_H__
+#include <time.h>
+#endif
+
 #ifndef __ZSTRING_H__
 #include "zstring.h"
 #endif

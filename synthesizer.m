@@ -27,7 +27,7 @@ int main (void)
   while (1) {
     char *string = s_recv (responder);
     time_t start = time (NULL);
-    printf ("synth: %s\n", string);
+    printf ("recv: %s\n", string);
 
     NSString *wrapped = [NSString stringWithUTF8String:string];
     NSUInteger length = [wrapped length];
@@ -42,9 +42,10 @@ int main (void)
       break;
 
     double elapsed = difftime (time (NULL), start);
-    char *response = (char *) malloc (100 * sizeof(char));
-    memset (response, '\0', 100);
-    snprintf (response, 100, "%d", (int) elapsed);
+    char *response = (char *) malloc (25 * sizeof(char));
+    memset (response, '\0', 25);
+    snprintf (response, 25, "%d", (int) elapsed);
+    printf ("resp: %s\n", response);
     s_send (responder, response);
     free (response);
   }

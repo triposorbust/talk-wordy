@@ -12,20 +12,25 @@ int main (int argc, char **argv)
   }
 
   void *context = zmq_ctx_new ();
-  void *pusher = zmq_socket (context, ZMQ_PUSH);
-  int rc = zmq_connect (pusher, argv [1]);
+  void *requester = zmq_socket (context, ZMQ_REQ);
+  int rc = zmq_connect (requester, argv [1]);
   assert (rc == 0);
 
   int length;
   while (1) {
     memset (BUFFER, '\0', 2048);
     gets (BUFFER);
-    length = s_send (pusher, BUFFER);
+    length = s_send (requester, BUFFER);
+
     if (0 == length)
       break;
+
+    char *string = s_recv (requester);
+    printf ("%s\n", string);
+    free (string);
   }
 
-  zmq_close (pusher);
+  zmq_close (requester);
   zmq_ctx_destroy (context);
   return 0;
 }

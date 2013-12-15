@@ -7,31 +7,39 @@ static char BUFFER [2048];
 void loop (char *address)
 {
   void *context = zmq_ctx_new ();
-  void *puller = zmq_socket (context, ZMQ_PULL);
+  void *responder = zmq_socket (context, ZMQ_REP);
   void *requester = zmq_socket (context, ZMQ_REQ);
-  int rc = zmq_bind (puller, address);
+  int rc = zmq_bind (responder, address);
   assert (rc == 0);
   rc = zmq_connect (requester, "ipc://oasis.ipc");
   assert (rc == 0);
 
   while (1) {
+    char *string = s_recv (responder);
+    time_t start = time (NULL);
     memset (BUFFER, '\0', 2048);
-    char *string = s_recv (puller);
     strncpy (BUFFER, string, 2047);
     free (string);
 
-    printf ("speak: %s\n", BUFFER);
+    printf ("send: %s\n", BUFFER);
     s_send (requester, BUFFER);
     if (0 == strlen (BUFFER))
       break;
 
     string = s_recv (requester);
-    printf ("speak: %ss\n", string);
+    printf ("time: %s\n", string);
     free (string);
+
+    double elapsed = difftime (time (NULL), start);
+    char *response = (char *) malloc (25 * sizeof(char));
+    memset (response, '\0', 25);
+    snprintf (response, 25, "%d", (int) elapsed);
+    s_send (responder, response);
+    free (response);
   }
 
   zmq_close (requester);
-  zmq_close (puller);
+  zmq_close (responder);
   zmq_ctx_destroy (context);
 }
 
