@@ -3,16 +3,15 @@
 #endif
 
 static char BUFFER [2048];
-static const int PROCESSES = 1;
 
 void loop (char *address)
 {
   void *context = zmq_ctx_new ();
   void *puller = zmq_socket (context, ZMQ_PULL);
-  void *publisher = zmq_socket (context, ZMQ_PUB);
+  void *requester = zmq_socket (context, ZMQ_REQ);
   int rc = zmq_bind (puller, address);
   assert (rc == 0);
-  rc = zmq_bind (publisher, "ipc://oasis.ipc");
+  rc = zmq_connect (requester, "ipc://oasis.ipc");
   assert (rc == 0);
 
   while (1) {
@@ -22,12 +21,16 @@ void loop (char *address)
     free (string);
 
     printf ("speak: %s\n", BUFFER);
-    s_send (publisher, BUFFER);
+    s_send (requester, BUFFER);
     if (0 == strlen (BUFFER))
       break;
+
+    string = s_recv (requester);
+    printf ("spoke: %s\n", string);
+    free (string);
   }
 
-  zmq_close (publisher);
+  zmq_close (requester);
   zmq_close (puller);
   zmq_ctx_destroy (context);
 }
@@ -39,23 +42,19 @@ int main (int argc, char **argv)
     exit (-1);
   }
 
-  int process;
-  for (process=0; process<PROCESSES; ++process) {
-    pid_t pid = fork();
-    if (pid < 0) {
-      exit (-1);
-    } else if (0 == pid) {
-      execl ("synth", "synth", (char *) NULL);
-      exit (-1);
-    }
+  pid_t pid = fork();
+  if (pid < 0) {
+    exit (-1);
+  } else if (0 == pid) {
+    execl ("synth", "synth", (char *) NULL);
+    exit (-1);
   }
   
   loop (argv [1]);
 
   int status;
-  pid_t wpid;
-  for (process=0; process<PROCESSES; ++process) {
-    wpid = wait (&status);
-  }
+  pid_t wpid = waitpid (pid, &status, 0);
+  assert (pid == wpid);
+
   return 0;
 }

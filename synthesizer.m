@@ -2,9 +2,7 @@
 #import <AppKit/AppKit.h>
 
 #import <zmq.h>
-#import <time.h>
 #import <assert.h>
-#import <stdlib.h>
 #import "zstring.h"
 
 int main (void)
@@ -21,14 +19,12 @@ int main (void)
   [voice autorelease];
 
   void *context = zmq_ctx_new ();
-  void *subscriber = zmq_socket (context, ZMQ_SUB);
-  int rc = zmq_connect (subscriber, "ipc://oasis.ipc");
-  assert (rc == 0);
-  rc = zmq_setsockopt (subscriber, ZMQ_SUBSCRIBE, "", 0);
+  void *responder = zmq_socket (context, ZMQ_REP);
+  int rc = zmq_bind (responder, "ipc://oasis.ipc");
   assert (rc == 0);
 
   while (1) {
-    char *string = s_recv (subscriber);
+    char *string = s_recv (responder);
     printf ("synth: %s\n", string);
 
     NSString *wrapped = [NSString stringWithUTF8String:string];
@@ -42,9 +38,17 @@ int main (void)
     free (string);
     if (length == 0)
       break;
+
+    char *response = (char *) malloc (100 * sizeof(char));
+    memset (response, '\0', 100);
+
+    snprintf (response, 100, "%u", (unsigned int) length);
+    s_send (responder, response);
+
+    free (response);
   }
 
-  zmq_close (subscriber);
+  zmq_close (responder);
   zmq_ctx_destroy (context);
 
   [synth autorelease];
