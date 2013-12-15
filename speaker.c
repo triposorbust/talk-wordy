@@ -10,10 +10,14 @@ int main (int argc, char **argv)
     printf("Usage:\n$ ./speaker <tcp-socket>\n");
     exit (-1);
   }
-
+  
   void *context = zmq_ctx_new ();
   void *puller = zmq_socket (context, ZMQ_PULL);
-  zmq_connect (puller, argv [1]);
+  void *sender = zmq_socket (context, ZMQ_PAIR);
+  int rc = zmq_bind (puller, argv [1]);
+  assert (rc == 0);
+  rc = zmq_connect (sender, "ipc://oasis.ipc");
+  assert (rc == 0);
 
   while (1) {
     memset (BUFFER, '\0', 2048);
@@ -21,11 +25,12 @@ int main (int argc, char **argv)
     strncpy (BUFFER, string, 2047);
     free (string);
 
-    printf ("%s\n", BUFFER);
+    s_send (sender, BUFFER);
     if (0 == strlen (BUFFER))
       break;
   }
 
+  zmq_close (sender);
   zmq_close (puller);
   zmq_ctx_destroy (context);
   return 0;

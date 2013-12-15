@@ -1,19 +1,38 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
+#import <zmq.h>
+#import <assert.h>
+#import "zstring.h"
+
 int main (int argc, char **argv)
 {
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
   NSSpeechSynthesizer *synth = [[NSSpeechSynthesizer alloc] initWithVoice:nil];
 
-  int word;
-  for (word=1; word<argc; ++word) {
-    NSString *wrapped = [NSString stringWithUTF8String:argv[word]];
+  void *context = zmq_ctx_new ();
+  void *receiver = zmq_socket (context, ZMQ_PAIR);
+  int rc = zmq_bind (receiver, "ipc://oasis.ipc");
+  assert (rc == 0);
+
+  while (1) {
+    char *string = s_recv (receiver);
+
+    NSString *wrapped = [NSString stringWithUTF8String:string];
+    NSUInteger length = [wrapped length];
+
     [synth startSpeakingString:wrapped];
     while ([synth isSpeaking])
       [NSThread sleepForTimeInterval:0.1];
     [wrapped autorelease];
+
+    free(string);
+    if (length == 0)
+      break;
   }
+
+  zmq_close (receiver);
+  zmq_ctx_destroy (context);
 
   [synth autorelease];
 

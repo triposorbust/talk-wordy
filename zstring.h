@@ -1,6 +1,11 @@
 #ifndef __ZSTRING_H__
 #define __ZSTRING_H__
 
+#ifndef __ZMQ_H__
+#define __ZMQ_H__
+#include <zmq.h>
+#endif
+
 #ifndef __STRING_H__
 #define __STRING_H__
 #include <string.h>
