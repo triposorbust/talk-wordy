@@ -3,7 +3,7 @@
 #endif
 
 static char BUFFER [2048];
-static const int PROCESSES = 2;
+static const int PROCESSES = 1;
 
 void loop (char *address)
 {

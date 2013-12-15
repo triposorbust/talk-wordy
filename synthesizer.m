@@ -2,13 +2,23 @@
 #import <AppKit/AppKit.h>
 
 #import <zmq.h>
+#import <time.h>
 #import <assert.h>
+#import <stdlib.h>
 #import "zstring.h"
 
 int main (void)
 {
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-  NSSpeechSynthesizer *synth = [[NSSpeechSynthesizer alloc] initWithVoice:nil];
+
+  NSString *voice;
+  NSUInteger index;
+  NSSpeechSynthesizer *synth;
+
+  index = arc4random() % [[NSSpeechSynthesizer availableVoices] count];
+  voice = [[NSSpeechSynthesizer availableVoices] objectAtIndex:index];
+  synth = [[NSSpeechSynthesizer alloc] initWithVoice:voice];
+  [voice autorelease];
 
   void *context = zmq_ctx_new ();
   void *subscriber = zmq_socket (context, ZMQ_SUB);
