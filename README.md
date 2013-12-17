@@ -35,6 +35,13 @@ Authors
  - ...
 
 
+Todo
+----
+
+ - Hook up `subprocess` to messaging queue
+ - Use ROUTER/DEALER architecture to handle many-to-many communication
+
+
 License
 -------
 
