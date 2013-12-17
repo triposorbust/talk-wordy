@@ -14,7 +14,7 @@ int main (int argc, char **argv)
 
   int status;
   for (i=1; i<argc; ++i) {
-    pid_t wpid = wait (&status);
+    wait (&status);
   }
   return 0;
 }
