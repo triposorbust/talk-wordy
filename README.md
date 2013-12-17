@@ -27,6 +27,14 @@ Dependencies
  - GCC + GNU make
 
 
+Notes
+-----
+
+As WLCF points out, this could be also be done by attaching the OSX `say` command to a particular network port (i.e. with `-n` option).
+
+Or a subshell / subprocess (`fork`) call.
+
+
 Authors
 -------
 
