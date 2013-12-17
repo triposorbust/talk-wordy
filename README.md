@@ -22,7 +22,7 @@ You can now run the `speaker` as a background process on a port of your choice, 
 Dependencies
 ------------
 
- - Cocoa AppKit (used for NSSpeechSynthesizer) + Foundation
+ - Cocoa AppKit (used for `NSSpeechSynthesizer`) + Foundation Framework
  - `subprocess` binary depends on `/usr/bin/say`, packaged in OSX
  - ZeroMQ (>= 4.0.0)
  - GCC + GNU make
