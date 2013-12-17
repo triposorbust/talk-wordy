@@ -23,16 +23,9 @@ Dependencies
 ------------
 
  - Cocoa AppKit (used for NSSpeechSynthesizer) + Foundation
+ - `subprocess` binary depends on `/usr/bin/say`, packaged in OSX
  - ZeroMQ (>= 4.0.0)
  - GCC + GNU make
-
-
-Notes
------
-
-As WLCF points out, this could be also be done by attaching the OSX `say` command to a particular network port (i.e. with `-n` option).
-
-Or a subshell / subprocess (`fork`) call.
 
 
 Authors
