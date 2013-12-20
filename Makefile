@@ -18,4 +18,4 @@ subprocess: subprocess.c
 
 .PHONY: clean
 clean:
-	@ rm -f sender speaker synth subprocess
+	@ rm -f sender speaker synth subprocess *.ipc

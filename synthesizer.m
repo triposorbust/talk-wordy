@@ -6,19 +6,22 @@
 #import <assert.h>
 #import "zstring.h"
 
-int main (int argc, char **argv )
+int main (int argc, char **argv)
 {
   assert (argc == 2);
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
-  NSString *voice;
-  NSUInteger index;
+  NSArray *voices = [[NSArray alloc]
+                     initWithObjects:@"Alex",@"Boing",@"Bruce",@"Fred",
+                     @"Junior",@"Princess",@"Ralph",@"Trinoids",@"Vicki",
+                     @"Victoria",@"Zarvox",nil];
   NSSpeechSynthesizer *synth;
 
-  index = arc4random() % [[NSSpeechSynthesizer availableVoices] count];
-  voice = [[NSSpeechSynthesizer availableVoices] objectAtIndex:index];
+  NSUInteger index = arc4random() % [voices count];
+  NSString *voice = [@"com.apple.speech.synthesis.voice."
+                     stringByAppendingString:[voices objectAtIndex:index]];
   synth = [[NSSpeechSynthesizer alloc] initWithVoice:voice];
-  [synth setRate:300.0];
+  [voices autorelease];
   [voice autorelease];
 
   void *context = zmq_ctx_new ();
