@@ -45,20 +45,23 @@ void loop (char *tcp, char *ipc)
 
 int main (int argc, char **argv)
 {
-  if (argc != 3) {
-    printf("Usage:\n$ ./speaker <tcp> <ipc>\n");
+  if (argc <= 1) {
+    printf("Usage:\n$ ./speaker <tcp> [ipc]\n");
     exit (-1);
   }
+
+  char *tcp = argv [1];
+  char *ipc = (argc >= 3) ? argv [2] : "ipc://oasis.ipc";
 
   pid_t pid = fork();
   if (pid < 0) {
     exit (-1);
   } else if (0 == pid) {
-    execl ("synth", "synth", argv [2], (char *) NULL);
+    execl ("synth", "synth", ipc, (char *) NULL);
     exit (-1);
   }
   
-  loop (argv [1], argv [2]);
+  loop (tcp, ipc);
 
   int status;
   pid_t wpid = waitpid (pid, &status, 0);
