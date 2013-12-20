@@ -6,8 +6,9 @@
 #import <assert.h>
 #import "zstring.h"
 
-int main (void)
+int main (int argc, char **argv )
 {
+  assert (argc == 2);
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
   NSString *voice;
@@ -17,11 +18,12 @@ int main (void)
   index = arc4random() % [[NSSpeechSynthesizer availableVoices] count];
   voice = [[NSSpeechSynthesizer availableVoices] objectAtIndex:index];
   synth = [[NSSpeechSynthesizer alloc] initWithVoice:voice];
+  [synth setRate:300.0];
   [voice autorelease];
 
   void *context = zmq_ctx_new ();
   void *responder = zmq_socket (context, ZMQ_REP);
-  int rc = zmq_bind (responder, "ipc://oasis.ipc");
+  int rc = zmq_bind (responder, argv [1]);
   assert (rc == 0);
 
   while (1) {

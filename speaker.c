@@ -4,14 +4,14 @@
 
 static char BUFFER [2048];
 
-void loop (char *address)
+void loop (char *tcp, char *ipc)
 {
   void *context = zmq_ctx_new ();
   void *responder = zmq_socket (context, ZMQ_REP);
   void *requester = zmq_socket (context, ZMQ_REQ);
-  int rc = zmq_connect (responder, address);
+  int rc = zmq_connect (responder, tcp);
   assert (rc == 0);
-  rc = zmq_connect (requester, "ipc://oasis.ipc");
+  rc = zmq_connect (requester, ipc);
   assert (rc == 0);
 
   while (1) {
@@ -45,8 +45,8 @@ void loop (char *address)
 
 int main (int argc, char **argv)
 {
-  if (argc == 1) {
-    printf("Usage:\n$ ./speaker <tcp-socket>\n");
+  if (argc != 3) {
+    printf("Usage:\n$ ./speaker <tcp> <ipc>\n");
     exit (-1);
   }
 
@@ -54,11 +54,11 @@ int main (int argc, char **argv)
   if (pid < 0) {
     exit (-1);
   } else if (0 == pid) {
-    execl ("synth", "synth", (char *) NULL);
+    execl ("synth", "synth", argv [2], (char *) NULL);
     exit (-1);
   }
   
-  loop (argv [1]);
+  loop (argv [1], argv [2]);
 
   int status;
   pid_t wpid = waitpid (pid, &status, 0);
