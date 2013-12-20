@@ -9,7 +9,7 @@ void loop (char *address)
   void *context = zmq_ctx_new ();
   void *responder = zmq_socket (context, ZMQ_REP);
   void *requester = zmq_socket (context, ZMQ_REQ);
-  int rc = zmq_bind (responder, address);
+  int rc = zmq_connect (responder, address);
   assert (rc == 0);
   rc = zmq_connect (requester, "ipc://oasis.ipc");
   assert (rc == 0);

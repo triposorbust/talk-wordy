@@ -13,7 +13,7 @@ int main (int argc, char **argv)
 
   void *context = zmq_ctx_new ();
   void *requester = zmq_socket (context, ZMQ_REQ);
-  int rc = zmq_connect (requester, argv [1]);
+  int rc = zmq_bind (requester, argv [1]);
   assert (rc == 0);
 
   int length;
